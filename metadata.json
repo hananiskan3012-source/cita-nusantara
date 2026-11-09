@@ -1,0 +1,6 @@
+{
+  "name": "RASA NUSANTARA - Kuliner Autentik Indonesia",
+  "description": "Website resmi RASA NUSANTARA. Setiap Gigitan, Cerita Kelezatan. Kuliner khas Indonesia berkualitas, higienis, dan dibuat dengan bahan pilihan terbaik.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
