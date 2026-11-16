@@ -18,6 +18,8 @@ export const CartDrawer: React.FC = () => {
     removeVoucher,
     setIsCheckoutOpen,
     setActiveTab,
+    setIsShippingCalcOpen,
+    shippingCalculation,
   } = useCart();
 
   const [couponInput, setCouponInput] = useState('');
@@ -246,11 +248,22 @@ export const CartDrawer: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex justify-between">
-                <span>Ongkos Kirim Estimasi</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1">
+                  <span>Ongkir ({shippingCalculation.distanceKm} km x Rp 5.000)</span>
+                  <button
+                    onClick={() => {
+                      setIsCartOpen(false);
+                      setIsShippingCalcOpen(true);
+                    }}
+                    className="text-[10px] text-[#E97832] font-semibold underline ml-1 hover:text-[#D66723]"
+                  >
+                    Ubah
+                  </button>
+                </div>
                 <span className="font-mono tabular-nums text-[#39271F] font-semibold">
                   {deliveryFee === 0 ? (
-                    <span className="text-[#66734B] uppercase text-[11px] font-bold">Gratis</span>
+                    <span className="text-[#66734B] uppercase text-[11px] font-bold">Gratis (Kupon)</span>
                   ) : (
                     formatRupiah(deliveryFee)
                   )}

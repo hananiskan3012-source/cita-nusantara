@@ -36,7 +36,7 @@ export const PROMO_BANNERS = [
     originalPrice: 85000,
     discountedPrice: 68000,
     code: 'NUSANTARA10',
-    image: '/src/assets/images/hero_culinary_feast_1793604100215.jpg',
+    image: '/assets/images/hero_culinary_feast_1793604100215.jpg',
   },
   {
     id: 'free-delivery',
@@ -44,6 +44,6 @@ export const PROMO_BANNERS = [
     badge: 'Kupon Pengiriman',
     description: 'Pesan makan siang kantor atau santap malam di rumah tanpa pusing ongkos kirim. Pengiriman kilat terjaga hangat.',
     code: 'HEMATONGKIR',
-    image: '/src/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
+    image: '/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
   },
 ];

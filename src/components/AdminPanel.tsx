@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Product, PromoCode, OrderStatus, CategoryType, Testimonial } from '../types';
+import { CITIES } from '../data/cities';
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -71,6 +72,8 @@ export const AdminPanel: React.FC = () => {
     badge: '' | 'Bestseller' | 'Favorit' | 'Baru' | 'Hemat';
     description: string;
     story: string;
+    originCity: string;
+    culturalStory: string;
     ingredientsText: string;
     portion: string;
     spiceLevel: 0 | 1 | 2 | 3;
@@ -84,10 +87,12 @@ export const AdminPanel: React.FC = () => {
     badge: '',
     description: '',
     story: '',
+    originCity: 'Jakarta',
+    culturalStory: '',
     ingredientsText: '',
     portion: '1 Porsi Lengkap',
     spiceLevel: 1,
-    image: '/src/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
+    image: '/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
     prepTime: '10-15 Menit',
   });
 
@@ -207,10 +212,12 @@ export const AdminPanel: React.FC = () => {
       badge: '',
       description: '',
       story: '',
+      originCity: 'Jakarta',
+      culturalStory: '',
       ingredientsText: 'Ayam segar pilihan, Bawang merah, Cabai rawit, Bumbu rempah',
       portion: '1 Porsi Lengkap',
       spiceLevel: 1,
-      image: '/src/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
+      image: '/assets/images/food_ayam_sambal_matah_1793604100905.jpg',
       prepTime: '10-15 Menit',
     });
     setIsProductModalOpen(true);
@@ -226,6 +233,8 @@ export const AdminPanel: React.FC = () => {
       badge: prod.badge || '',
       description: prod.description,
       story: prod.story || '',
+      originCity: prod.originCity || 'Jakarta',
+      culturalStory: prod.culturalStory || '',
       ingredientsText: prod.ingredients.join(', '),
       portion: prod.portion,
       spiceLevel: prod.spiceLevel,
@@ -255,6 +264,8 @@ export const AdminPanel: React.FC = () => {
       badge: productForm.badge || undefined,
       description: productForm.description.trim(),
       story: productForm.story.trim(),
+      originCity: productForm.originCity.trim() || undefined,
+      culturalStory: productForm.culturalStory.trim() || undefined,
       ingredients: ingredients.length > 0 ? ingredients : ['Bahan alami pilihan'],
       portion: productForm.portion,
       spiceLevel: productForm.spiceLevel,
@@ -711,9 +722,16 @@ export const AdminPanel: React.FC = () => {
                               />
                               <div>
                                 <h4 className="font-bold text-[#39271F] line-clamp-1">{prod.name}</h4>
-                                <p className="text-[10px] text-stone-400 font-mono">
-                                  Rating: {prod.rating}★ ({prod.reviewCount} ulasan)
-                                </p>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[10px] text-stone-400 font-mono">
+                                    {prod.rating}★ ({prod.reviewCount})
+                                  </span>
+                                  {prod.originCity && (
+                                    <span className="text-[9px] font-semibold text-[#E97832] bg-[#FFF8EF] px-1.5 py-0.2 rounded border border-[#F2E5D7]">
+                                      {prod.originCity}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -870,7 +888,12 @@ export const AdminPanel: React.FC = () => {
                             </a>
                           </p>
                           <p className="text-stone-600 mt-1">
-                            <span className="text-stone-400">Pengiriman:</span> {ord.deliveryMethod.toUpperCase()} ·{' '}
+                            <span className="text-stone-400">Pengiriman:</span> {ord.deliveryMethod.toUpperCase()}{' '}
+                            {ord.distanceKm ? (
+                              <span className="font-mono text-[#E97832] font-semibold">
+                                ({ord.distanceKm} km x Rp 5.000)
+                              </span>
+                            ) : null} ·{' '}
                             <span className="text-stone-400">Bayar:</span> {ord.paymentMethod.toUpperCase()}
                           </p>
                         </div>
@@ -1349,8 +1372,10 @@ export const AdminPanel: React.FC = () => {
                     className="w-full px-3 py-2 rounded-xl border border-[#F2E5D7] bg-white focus:outline-none"
                   >
                     <option value="makanan-utama">Makanan Utama</option>
-                    <option value="camilan">Camilan</option>
-                    <option value="minuman">Minuman</option>
+                    <option value="makanan-sehat">Sehat & Bergizi</option>
+                    <option value="makanan-modern">Modern & Fusion</option>
+                    <option value="camilan">Camilan & Dessert</option>
+                    <option value="minuman">Minuman Khas & Cafe</option>
                     <option value="paket-hemat">Paket Hemat</option>
                   </select>
                 </div>
@@ -1397,29 +1422,81 @@ export const AdminPanel: React.FC = () => {
 
               <div>
                 <label className="block font-semibold text-stone-700 mb-1">Pilihan Foto Menu Makanan & Minuman</label>
-                <div className="grid grid-cols-4 gap-2 mb-2">
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mb-2 max-h-40 overflow-y-auto p-1 bg-white rounded-xl border border-[#F2E5D7]">
                   {[
-                    { label: 'Sambal Matah', path: '/src/assets/images/food_ayam_sambal_matah_1793604100905.jpg' },
-                    { label: 'Nasi Goreng', path: '/src/assets/images/food_nasi_goreng_spesial_1793604102106.jpg' },
-                    { label: 'Geprek Mozarella', path: '/src/assets/images/food_ayam_geprek_mozarella_1793604103164.jpg' },
-                    { label: 'Kopi Aren', path: '/src/assets/images/food_kopi_susu_aren_1793604103107.jpg' },
-                    { label: 'Rice Bowl Teriyaki', path: '/src/assets/images/food_ricebowl_teriyaki_1793606006818.jpg' },
-                    { label: 'Dimsum Siomay', path: '/src/assets/images/food_dimsum_siomay_1793606004592.jpg' },
-                    { label: 'Pisang Cokelat', path: '/src/assets/images/food_pisang_cokelat_keju_1793606005851.jpg' },
-                    { label: 'Es Teh Lemon', path: '/src/assets/images/food_es_teh_lemon_sereh_1793606006171.jpg' },
+                    { label: 'Gado-Gado Organik', path: '/assets/images/food_gado_gado_organik_1794651252305.jpg' },
+                    { label: 'Salmon Nasi Merah', path: '/assets/images/food_salmon_nasimerah_1794651253125.jpg' },
+                    { label: 'Quinoa Ayam Tempe', path: '/assets/images/food_quinoa_ayam_tempe_1794651253409.jpg' },
+                    { label: 'Pepes Kakap Sehat', path: '/assets/images/food_pepes_kakap_nasihitam_1794651253739.jpg' },
+                    { label: 'Es Cendol Aren', path: '/assets/images/drink_es_cendol_aren_1794651049777.jpg' },
+                    { label: 'Alpukat Milo', path: '/assets/images/drink_alpukat_kocok_milo_1794651051029.jpg' },
+                    { label: 'Boba Matcha', path: '/assets/images/drink_matcha_boba_latte_1794651051099.jpg' },
+                    { label: 'Mango Sago', path: '/assets/images/drink_mango_sago_creamy_1794651051329.jpg' },
+                    { label: 'Es Teler Sultan', path: '/assets/images/drink_es_teler_sultan_1794651064116.jpg' },
+                    { label: 'Wagyu Truffle Rice', path: '/assets/images/food_wagyu_truffle_friedrice_1794210657151.jpg' },
+                    { label: 'Rendang Burger', path: '/assets/images/food_rendang_burger_1794210657625.jpg' },
+                    { label: 'Salmon Mentai', path: '/assets/images/food_salmon_mentai_1794210671923.jpg' },
+                    { label: 'Sei Sapi Tacos', path: '/assets/images/food_sei_sapi_tacos_1794210672813.jpg' },
+                    { label: 'Pempek Palembang', path: '/assets/images/food_pempek_palembang_1794209763216.jpg' },
+                    { label: 'Coto Makassar', path: '/assets/images/food_coto_makassar_1794209763550.jpg' },
+                    { label: 'Soto Medan', path: '/assets/images/food_soto_medan_1794209763139.jpg' },
+                    { label: 'Choi Pan Pontianak', path: '/assets/images/food_choipan_pontianak_1794209118087.jpg' },
+                    { label: 'Bakmi Singkawang', path: '/assets/images/food_mie_singkawang_1794209119661.jpg' },
+                    { label: 'Patin Palangka Raya', path: '/assets/images/food_patin_bambu_palangkaraya_1794209119453.jpg' },
+                    { label: 'Rendang Padang', path: '/assets/images/food_rendang_padang_1794208505992.jpg' },
+                    { label: 'Soto Betawi', path: '/assets/images/food_soto_betawi_1794208508469.jpg' },
+                    { label: 'Gudeg Jogja', path: '/assets/images/food_gudeg_jogja_1794208507771.jpg' },
+                    { label: 'Rawon Surabaya', path: '/assets/images/food_rawon_surabaya_1794208508249.jpg' },
+                    { label: 'Sambal Matah', path: '/assets/images/food_ayam_sambal_matah_1793604100905.jpg' },
+                    { label: 'Nasi Goreng', path: '/assets/images/food_nasi_goreng_spesial_1793604102106.jpg' },
+                    { label: 'Geprek Mozarella', path: '/assets/images/food_ayam_geprek_mozarella_1793604103164.jpg' },
+                    { label: 'Rice Bowl Teriyaki', path: '/assets/images/food_ricebowl_teriyaki_1793606006818.jpg' },
+                    { label: 'Dimsum Siomay', path: '/assets/images/food_dimsum_siomay_1793606004592.jpg' },
+                    { label: 'Pisang Cokelat', path: '/assets/images/food_pisang_cokelat_keju_1793606005851.jpg' },
+                    { label: 'Es Teh Lemon', path: '/assets/images/food_es_teh_lemon_sereh_1793606006171.jpg' },
+                    { label: 'Kopi Aren', path: '/assets/images/food_kopi_susu_aren_1793604103107.jpg' },
                   ].map((preset) => (
                     <button
                       key={preset.path}
                       type="button"
                       onClick={() => setProductForm({ ...productForm, image: preset.path })}
-                      className={`relative rounded-lg overflow-hidden border-2 p-0.5 transition-all ${
+                      className={`relative rounded-lg overflow-hidden border-2 p-0.5 transition-all text-left ${
                         productForm.image === preset.path ? 'border-[#E97832] ring-2 ring-[#E97832]/30' : 'border-transparent hover:border-stone-300'
                       }`}
                     >
-                      <img src={preset.path} alt={preset.label} className="w-full h-12 object-cover rounded" />
-                      <span className="block text-[9px] text-center mt-0.5 truncate text-[#39271F] font-medium">{preset.label}</span>
+                      <img src={preset.path} alt={preset.label} className="w-full h-11 object-cover rounded" />
+                      <span className="block text-[8px] text-center mt-0.5 truncate text-[#39271F] font-medium leading-tight">{preset.label}</span>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-stone-700 mb-1">Asal Kota / Daerah Kuliner</label>
+                  <select
+                    value={productForm.originCity}
+                    onChange={(e) => setProductForm({ ...productForm, originCity: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-[#F2E5D7] bg-white focus:outline-none"
+                  >
+                    {CITIES.map((c) => (
+                      <option key={c.id} value={c.name}>
+                        {c.name} ({c.province})
+                      </option>
+                    ))}
+                    <option value="Nusantara">Nusantara Umum</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-stone-700 mb-1">Catatan Warisan Budaya / Tradisional</label>
+                  <input
+                    type="text"
+                    value={productForm.culturalStory}
+                    onChange={(e) => setProductForm({ ...productForm, culturalStory: e.target.value })}
+                    placeholder="Contoh: Kuliner legendaris pusaka Minangkabau..."
+                    className="w-full px-3 py-2 rounded-xl border border-[#F2E5D7] bg-white focus:outline-none"
+                  />
                 </div>
               </div>
 

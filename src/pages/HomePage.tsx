@@ -1,16 +1,34 @@
 import React from 'react';
 import { Hero } from '../components/Hero';
 import { ProductCard } from '../components/ProductCard';
+import { CityExplorerSection } from '../components/CityExplorerSection';
 import { CATEGORIES } from '../data/products';
 import { PROMO_BANNERS } from '../data/promos';
 import { useCart } from '../context/CartContext';
 import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, UtensilsCrossed, Clock, Star, Quote } from 'lucide-react';
 
+import { CategoryType } from '../types';
+
 export const HomePage: React.FC = () => {
-  const { setActiveTab, applyVoucher, setIsCartOpen, products, testimonials } = useCart();
+  const { setActiveTab, setSelectedCategory, applyVoucher, setIsCartOpen, products, testimonials } = useCart();
 
   // Bestsellers / Featured items (only available ones first, or first 4)
   const featuredProducts = products.filter((p) => p.isAvailable !== false).slice(0, 4);
+
+  // Modern fusion highlights (City x Bull Inspired)
+  const modernProducts = products
+    .filter((p) => p.category === 'makanan-modern' && p.isAvailable !== false)
+    .slice(0, 4);
+
+  // Sweet & refreshing signature drinks showcase
+  const sweetDrinks = products
+    .filter((p) => p.category === 'minuman' && p.isAvailable !== false)
+    .slice(-4);
+
+  // Healthy & nutritious dishes showcase
+  const healthyProducts = products
+    .filter((p) => p.category === 'makanan-sehat' && p.isAvailable !== false)
+    .slice(0, 4);
 
   const pillars = [
     {
@@ -65,11 +83,15 @@ export const HomePage: React.FC = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActiveTab('menu')}
+              onClick={() => {
+                setSelectedCategory(cat.id as CategoryType);
+                setActiveTab('menu');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="p-4 rounded-2xl bg-white border border-[#F2E5D7] hover:border-[#E97832] text-left transition-all hover:shadow-md group flex flex-col justify-between"
             >
               <div>
@@ -88,7 +110,47 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Section Produk Unggulan */}
+      {/* Modern & Fusion Culinary Bistro Section (City x Bull Inspired) */}
+      {modernProducts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#6CABDD]/20 to-[#DE0029]/20 border border-[#6CABDD]/40 text-[#001838] text-[11px] font-black uppercase tracking-wider mb-2">
+                <Sparkles className="w-3.5 h-3.5 text-[#DE0029]" />
+                <span>Koleksi Gourmet Modern & Fusion (City × Bull Spirit)</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#39271F]">
+                Inovasi Rasa Kontemporer Nusantara
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Kreasi modern berkualitas tinggi: Truffle Wagyu Fried Rice, Gourmet Rendang Brioche Burger, Salmon Mentai Kecombrang, dan Smoked Sei Sapi Tacos.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedCategory('makanan-modern');
+                setActiveTab('menu');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xs font-bold text-[#E97832] hover:text-[#D66723] flex items-center gap-1.5 self-start sm:self-auto group"
+            >
+              <span>Semua Menu Modern</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {modernProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 3. Section Kuliner Khas Kota / Tradisional Nusantara */}
+      <CityExplorerSection />
+
+      {/* 4. Section Produk Unggulan */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
@@ -96,7 +158,7 @@ export const HomePage: React.FC = () => {
               Menu Terlaris & Paling Dicari
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#39271F]">
-              Cita Rasa Juara Nusantara
+              Cita Rasa Tradisional Juara
             </h2>
           </div>
           <button
@@ -114,6 +176,79 @@ export const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* 4b. Section Minuman Manis & Penyegar Favorit */}
+      {sweetDrinks.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-bold text-[#E97832] uppercase tracking-wider block mb-1">
+                Koleksi Minuman Manis & Creamy
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#39271F]">
+                Minuman Segar & Dessert Manis Pilihan
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Nikmati Es Cendol Gula Aren, Alpukat Kocok Milo, Brown Sugar Boba Matcha, Mango Sago Creamy, hingga Es Teler Sultan!
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedCategory('minuman');
+                setActiveTab('menu');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xs font-bold text-[#E97832] hover:text-[#D66723] flex items-center gap-1.5 self-start sm:self-auto group"
+            >
+              <span>Semua Minuman Manis</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {sweetDrinks.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 4c. Section Menu Sehat & Bergizi Tinggi */}
+      {healthyProducts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#66734B]/15 border border-[#66734B]/30 text-[#495532] text-[11px] font-black uppercase tracking-wider mb-2">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#66734B]" />
+                <span>Rendah Minyak · Tinggi Protein & Serat Alami</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#39271F]">
+                Menu Sehat & Bergizi Seimbang
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Pilihan hidangan bernutrisi tinggi: Gado-Gado Organik Saus Mede, Grilled Salmon Nasi Merah, Power Bowl Ayam & Tempe Quinoa, hingga Pepes Kakap Bebas Minyak.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedCategory('makanan-sehat');
+                setActiveTab('menu');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xs font-bold text-[#66734B] hover:text-[#4e5838] flex items-center gap-1.5 self-start sm:self-auto group"
+            >
+              <span>Semua Menu Sehat</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {healthyProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 4. Section Keunggulan Brand RASA NUSANTARA */}
       <section className="bg-[#F2E5D7]/50 py-16 border-y border-[#F2E5D7]">
@@ -161,7 +296,7 @@ export const HomePage: React.FC = () => {
         <div className="relative rounded-3xl bg-gradient-to-r from-[#39271F] to-[#4c352a] text-[#FFF8EF] p-8 sm:p-12 overflow-hidden shadow-xl border border-stone-800">
           <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-20 pointer-events-none hidden md:block">
             <img
-              src="/src/assets/images/hero_culinary_feast_1793604100215.jpg"
+              src="/assets/images/hero_culinary_feast_1793604100215.jpg"
               alt="Background Promo"
               className="w-full h-full object-cover"
             />
@@ -213,17 +348,26 @@ export const HomePage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {testimonials.map((testi) => (
             <div
               key={testi.id}
-              className="bg-white p-6 rounded-2xl border border-[#F2E5D7] shadow-sm flex flex-col justify-between"
+              className={`bg-white p-6 rounded-2xl border shadow-sm flex flex-col justify-between transition-all hover:shadow-md ${
+                testi.photo ? 'border-[#E97832]/40 bg-gradient-to-b from-white to-[#FFF8EF]/40' : 'border-[#F2E5D7]'
+              }`}
             >
               <div>
-                <div className="flex items-center gap-1 text-[#E97832] mb-3">
-                  {[...Array(testi.rating)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-[#E97832]" />
-                  ))}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-1 text-[#E97832]">
+                    {[...Array(testi.rating)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-[#E97832]" />
+                    ))}
+                  </div>
+                  {testi.verifiedBadge && (
+                    <span className="text-[9px] font-bold text-[#E97832] bg-[#FFF8EF] px-2 py-0.5 rounded-full border border-[#F2E5D7]">
+                      ★ {testi.verifiedBadge}
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-stone-700 leading-relaxed italic mb-4">
                   "{testi.comment}"
@@ -231,12 +375,20 @@ export const HomePage: React.FC = () => {
               </div>
 
               <div className="pt-3 border-t border-[#F2E5D7] flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#E97832] text-white flex items-center justify-center font-bold text-xs shrink-0">
-                  {testi.avatar}
-                </div>
+                {testi.photo ? (
+                  <img
+                    src={testi.photo}
+                    alt={testi.name}
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-[#E97832] shadow-sm shrink-0"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-[#E97832] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                    {testi.avatar}
+                  </div>
+                )}
                 <div>
                   <h4 className="text-xs font-bold text-[#39271F]">{testi.name}</h4>
-                  <p className="text-[10px] text-stone-500">{testi.role}</p>
+                  <p className="text-[10px] text-stone-500 line-clamp-1">{testi.role}</p>
                   <p className="text-[10px] text-[#66734B] font-medium mt-0.5">
                     Menu Favorit: {testi.favoriteMenu}
                   </p>

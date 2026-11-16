@@ -1,4 +1,30 @@
-export type CategoryType = 'semua' | 'makanan-utama' | 'camilan' | 'minuman' | 'paket-hemat';
+export type CategoryType = 'semua' | 'makanan-sehat' | 'makanan-utama' | 'makanan-modern' | 'camilan' | 'minuman' | 'paket-hemat';
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  bio?: string;
+  city: string;
+  address: string;
+  tier: 'Silver Foodie' | 'Gold Epicurean' | 'Platinum Cityzen VIP';
+  points: number; // Rasa Poin
+  dietaryPreferences: string[];
+  favoriteSpice: string;
+  joinedDate: string;
+}
+
+export interface SavedAddress {
+  id: string;
+  label: string; // "Rumah", "Kantor", "Apartemen", dll
+  receiverName: string;
+  phone: string;
+  city: string;
+  fullAddress: string;
+  isDefault: boolean;
+}
 
 export interface Product {
   id: string;
@@ -18,6 +44,20 @@ export interface Product {
   gallery?: string[];
   prepTime: string;
   isAvailable?: boolean;
+  originCity?: string;
+  culturalStory?: string;
+}
+
+export interface CityRegion {
+  id: string;
+  name: string;
+  province: string;
+  island?: 'Sumatera' | 'Jawa' | 'Kalimantan' | 'Sulawesi' | 'Bali & Nusa Tenggara' | 'Maluku & Papua';
+  tagline: string;
+  description: string;
+  iconDish: string;
+  signatureDishId: string;
+  accentColor?: string;
 }
 
 export interface CartItem {
@@ -42,9 +82,11 @@ export interface Testimonial {
   name: string;
   role: string;
   avatar: string;
+  photo?: string;
   comment: string;
   rating: number;
   favoriteMenu: string;
+  verifiedBadge?: string;
 }
 
 export type OrderStatus = 'menunggu' | 'diproses' | 'diantar' | 'selesai' | 'dibatalkan';
@@ -65,6 +107,9 @@ export interface OrderData {
   voucherCode?: string;
   timestamp: string;
   status: OrderStatus;
+  originCity?: string;
+  destinationCity?: string;
+  distanceKm?: number;
 }
 
 export interface StoreSettings {
@@ -78,5 +123,6 @@ export interface StoreSettings {
   openingHours: string;
   freeShippingThreshold: number;
   standardDeliveryFee: number;
+  ratePerKm: number; // 5000 Rp/km
 }
 

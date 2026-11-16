@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product, CartItem, PromoCode, OrderData, OrderStatus, StoreSettings, Testimonial } from '../types';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { Product, CartItem, PromoCode, OrderData, OrderStatus, StoreSettings, Testimonial, UserProfile, SavedAddress, CategoryType } from '../types';
 import { PRODUCTS as DEFAULT_PRODUCTS } from '../data/products';
 import { PROMO_CODES as DEFAULT_PROMOS } from '../data/promos';
 import { TESTIMONIALS as DEFAULT_TESTIMONIALS } from '../data/testimonials';
+import { calculateShipping, RATE_PER_KM, ShippingCalculationResult } from '../data/shipping';
+import { DEFAULT_USERS, DEFAULT_SAVED_ADDRESSES } from '../data/users';
 
 interface ToastItem {
   id: string;
@@ -13,14 +15,15 @@ interface ToastItem {
 const DEFAULT_SETTINGS: StoreSettings = {
   storeName: 'RASA NUSANTARA',
   tagline: 'Setiap Gigitan, Cerita Kelezatan.',
-  announcement: '🎉 Nikmati Gratis Ongkir se-Jakarta min. belanja Rp 75.000 dengan kode HEMATONGKIR!',
+  announcement: '🎉 Nikmati Pengiriman Kuliner Cepat Tarif Rp 5.000 / KM atau gunakan kupon HEMATONGKIR!',
   showAnnouncement: true,
   whatsappNumber: '6281234567890',
   email: 'halo@rasanusantara.id',
   address: 'Jl. Danau Toba No. 45, Kebayoran Baru, Jakarta Selatan 12180',
   openingHours: 'Setiap Hari: 10:00 - 21:30 WIB',
   freeShippingThreshold: 75000,
-  standardDeliveryFee: 10000,
+  standardDeliveryFee: 15000,
+  ratePerKm: 5000,
 };
 
 const DEFAULT_INITIAL_ORDERS: OrderData[] = [
@@ -145,6 +148,38 @@ interface CartContextType {
   setActiveTab: (tab: 'home' | 'menu' | 'promo' | 'tentang' | 'kontak') => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  selectedCityFilter: string;
+  setSelectedCityFilter: (city: string) => void;
+  selectedCategory: CategoryType;
+  setSelectedCategory: (cat: CategoryType) => void;
+
+  // Delivery & Ongkir Calculator (1 km = Rp 5.000)
+  deliveryMode: 'dalam-kota' | 'antar-kota';
+  setDeliveryMode: (mode: 'dalam-kota' | 'antar-kota') => void;
+  deliveryOriginCity: string;
+  setDeliveryOriginCity: (city: string) => void;
+  deliveryDestinationCity: string;
+  setDeliveryDestinationCity: (city: string) => void;
+  deliveryDistanceKm: number;
+  setDeliveryDistanceKm: (km: number) => void;
+  shippingCalculation: ShippingCalculationResult;
+  isShippingCalcOpen: boolean;
+  setIsShippingCalcOpen: (open: boolean) => void;
+
+  // User Profile & Account Management
+  currentUser: UserProfile;
+  users: UserProfile[];
+  savedAddresses: SavedAddress[];
+  isProfileModalOpen: boolean;
+  setIsProfileModalOpen: (open: boolean) => void;
+  updateCurrentUser: (updates: Partial<UserProfile>) => void;
+  switchUser: (userId: string) => void;
+  createNewUser: (user: Omit<UserProfile, 'id' | 'points' | 'tier' | 'joinedDate'>) => void;
+  addSavedAddress: (addr: Omit<SavedAddress, 'id'>) => void;
+  updateSavedAddress: (id: string, updates: Partial<SavedAddress>) => void;
+  deleteSavedAddress: (id: string) => void;
+  setDefaultAddress: (id: string) => void;
+  addPoints: (amount: number) => void;
 
   // Admin Panel Control
   isAdminOpen: boolean;
@@ -165,12 +200,15 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const STORAGE_KEYS = {
   CART: 'rasa_nusantara_cart_v2',
   WISHLIST: 'rasa_nusantara_wishlist_v2',
-  PRODUCTS: 'rasa_nusantara_products_v3',
+  PRODUCTS: 'rasa_nusantara_products_v10',
   PROMOS: 'rasa_nusantara_promos_v2',
   ORDERS: 'rasa_nusantara_orders_v2',
-  TESTIMONIALS: 'rasa_nusantara_testimonials_v2',
+  TESTIMONIALS: 'rasa_nusantara_testimonials_v4',
   SETTINGS: 'rasa_nusantara_settings_v2',
   ADMIN_AUTH: 'rasa_nusantara_admin_auth_v2',
+  CURRENT_USER: 'rasa_nusantara_current_user_v3',
+  USERS: 'rasa_nusantara_users_list_v3',
+  ADDRESSES: 'rasa_nusantara_addresses_v2',
 };
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -261,6 +299,45 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeOrder, setActiveOrder] = useState<OrderData | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'menu' | 'promo' | 'tentang' | 'kontak'>('home');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCityFilter, setSelectedCityFilter] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('semua');
+
+  // Delivery & Ongkir States (Tarif: 1 km = Rp 5.000)
+  const [deliveryMode, setDeliveryMode] = useState<'dalam-kota' | 'antar-kota'>('dalam-kota');
+  const [deliveryOriginCity, setDeliveryOriginCity] = useState<string>('Jakarta');
+  const [deliveryDestinationCity, setDeliveryDestinationCity] = useState<string>('Jakarta');
+  const [deliveryDistanceKm, setDeliveryDistanceKm] = useState<number>(3);
+  const [isShippingCalcOpen, setIsShippingCalcOpen] = useState<boolean>(false);
+
+  // Users and Accounts State
+  const [users, setUsers] = useState<UserProfile[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.USERS);
+      return saved ? JSON.parse(saved) : DEFAULT_USERS;
+    } catch {
+      return DEFAULT_USERS;
+    }
+  });
+
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      return saved ? JSON.parse(saved) : DEFAULT_USERS[0];
+    } catch {
+      return DEFAULT_USERS[0];
+    }
+  });
+
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ADDRESSES);
+      return saved ? JSON.parse(saved) : DEFAULT_SAVED_ADDRESSES;
+    } catch {
+      return DEFAULT_SAVED_ADDRESSES;
+    }
+  });
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Persist items
   useEffect(() => {
@@ -273,10 +350,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem(STORAGE_KEYS.TESTIMONIALS, JSON.stringify(testimonials));
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(storeSettings));
       localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, isAdminLoggedIn ? 'true' : 'false');
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
+      localStorage.setItem(STORAGE_KEYS.ADDRESSES, JSON.stringify(savedAddresses));
     } catch {
       // ignore storage errors
     }
-  }, [cart, wishlist, products, promos, orders, testimonials, storeSettings, isAdminLoggedIn]);
+  }, [cart, wishlist, products, promos, orders, testimonials, storeSettings, isAdminLoggedIn, users, currentUser, savedAddresses]);
 
   const showToast = (message: string, type: 'success' | 'info' | 'warning' = 'success') => {
     const id = Date.now().toString() + Math.random().toString(36).substring(2, 5);
@@ -505,13 +585,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
 
-  // Delivery fee logic based on storeSettings
+  // Delivery fee logic based on distance (1 km = Rp 5.000)
+  const shippingCalculation = useMemo(() => {
+    return calculateShipping(deliveryMode, deliveryOriginCity, deliveryDestinationCity, deliveryDistanceKm);
+  }, [deliveryMode, deliveryOriginCity, deliveryDestinationCity, deliveryDistanceKm]);
+
+  const isFreeShippingVoucher = appliedVoucher?.code === 'HEMATONGKIR';
+
   const deliveryFee =
     cart.length === 0
       ? 0
-      : subtotal >= storeSettings.freeShippingThreshold
+      : isFreeShippingVoucher
       ? 0
-      : storeSettings.standardDeliveryFee;
+      : shippingCalculation.deliveryFee;
 
   // Calculate discount
   let discount = 0;
@@ -552,6 +638,105 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     showToast('Voucher dibatalkan', 'info');
   };
 
+  // User Profile & Account Methods
+  const updateCurrentUser = (updates: Partial<UserProfile>) => {
+    setCurrentUser((prev) => {
+      const updated = { ...prev, ...updates };
+      setUsers((prevUsers) =>
+        prevUsers.map((u) => (u.id === prev.id ? updated : u))
+      );
+      return updated;
+    });
+    showToast('Profil akun berhasil diperbarui!', 'success');
+  };
+
+  const switchUser = (userId: string) => {
+    const target = users.find((u) => u.id === userId);
+    if (target) {
+      setCurrentUser(target);
+      if (target.city) {
+        setDeliveryDestinationCity(target.city);
+      }
+      showToast(`Beralih ke profil "${target.name}" (${target.tier})`, 'info');
+    }
+  };
+
+  const createNewUser = (user: Omit<UserProfile, 'id' | 'points' | 'tier' | 'joinedDate'>) => {
+    const id = `user-${Date.now().toString().slice(-6)}`;
+    const newUser: UserProfile = {
+      ...user,
+      id,
+      points: 500, // Welcome bonus points
+      tier: 'Silver Foodie',
+      joinedDate: 'Hari ini',
+    };
+    setUsers((prev) => [newUser, ...prev]);
+    setCurrentUser(newUser);
+    if (newUser.city) {
+      setDeliveryDestinationCity(newUser.city);
+    }
+    showToast(`Selamat datang, ${newUser.name}! Akun aktif + Bonus 500 Poin.`, 'success');
+  };
+
+  const addSavedAddress = (addr: Omit<SavedAddress, 'id'>) => {
+    const id = `addr-${Date.now().toString().slice(-6)}`;
+    const newAddr: SavedAddress = { ...addr, id };
+    if (newAddr.isDefault) {
+      setSavedAddresses((prev) => prev.map((a) => ({ ...a, isDefault: false })).concat(newAddr));
+    } else {
+      setSavedAddresses((prev) => [...prev, newAddr]);
+    }
+    showToast(`Alamat "${newAddr.label}" berhasil disimpan!`, 'success');
+  };
+
+  const updateSavedAddress = (id: string, updates: Partial<SavedAddress>) => {
+    setSavedAddresses((prev) =>
+      prev.map((a) => {
+        if (a.id === id) {
+          return { ...a, ...updates };
+        }
+        if (updates.isDefault) {
+          return { ...a, isDefault: false };
+        }
+        return a;
+      })
+    );
+    showToast('Alamat berhasil diperbarui!', 'success');
+  };
+
+  const deleteSavedAddress = (id: string) => {
+    setSavedAddresses((prev) => prev.filter((a) => a.id !== id));
+    showToast('Alamat berhasil dihapus.', 'info');
+  };
+
+  const setDefaultAddress = (id: string) => {
+    const target = savedAddresses.find((a) => a.id === id);
+    if (target) {
+      setSavedAddresses((prev) =>
+        prev.map((a) => ({ ...a, isDefault: a.id === id }))
+      );
+      if (target.city) {
+        setDeliveryDestinationCity(target.city);
+      }
+      showToast(`Alamat utama: "${target.label}" (${target.city})`, 'success');
+    }
+  };
+
+  const addPoints = (amount: number) => {
+    setCurrentUser((prev) => {
+      const nextPoints = prev.points + amount;
+      let nextTier = prev.tier;
+      if (nextPoints >= 10000) nextTier = 'Platinum Cityzen VIP';
+      else if (nextPoints >= 3000) nextTier = 'Gold Epicurean';
+
+      const updated: UserProfile = { ...prev, points: nextPoints, tier: nextTier };
+      setUsers((prevUsers) =>
+        prevUsers.map((u) => (u.id === prev.id ? updated : u))
+      );
+      return updated;
+    });
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -571,7 +756,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Orders
         orders,
-        addOrder,
+        addOrder: (order: OrderData) => {
+          setOrders((prev) => [order, ...prev]);
+          const earned = Math.floor(order.total / 1000);
+          if (earned > 0) {
+            addPoints(earned);
+            showToast(`+${earned} Rasa Poin berhasil ditambahkan ke akunmu!`, 'success');
+          }
+        },
         updateOrderStatus,
         deleteOrder,
 
@@ -583,6 +775,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Store Settings
         storeSettings,
         updateStoreSettings,
+
+        // User Accounts
+        currentUser,
+        users,
+        savedAddresses,
+        isProfileModalOpen,
+        setIsProfileModalOpen,
+        updateCurrentUser,
+        switchUser,
+        createNewUser,
+        addSavedAddress,
+        updateSavedAddress,
+        deleteSavedAddress,
+        setDefaultAddress,
+        addPoints,
 
         // Cart
         cart,
@@ -615,6 +822,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setActiveTab,
         searchQuery,
         setSearchQuery,
+        selectedCityFilter,
+        setSelectedCityFilter,
+        selectedCategory,
+        setSelectedCategory,
+
+        // Delivery & Ongkir (1 km = Rp 5.000)
+        deliveryMode,
+        setDeliveryMode,
+        deliveryOriginCity,
+        setDeliveryOriginCity,
+        deliveryDestinationCity,
+        setDeliveryDestinationCity,
+        deliveryDistanceKm,
+        setDeliveryDistanceKm,
+        shippingCalculation,
+        isShippingCalcOpen,
+        setIsShippingCalcOpen,
 
         // Admin Controls
         isAdminOpen,

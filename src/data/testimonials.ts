@@ -2,6 +2,28 @@ import { Testimonial } from '../types';
 
 export const TESTIMONIALS: Testimonial[] = [
   {
+    id: 'testi-messi',
+    name: 'Lionel Messi',
+    role: 'Pesepakbola Legendaris Dunia & Kapten Juara Dunia',
+    avatar: 'LM',
+    photo: '/assets/images/messi_testimonial_1794209594448.jpg',
+    comment: 'Luar biasa! Rendang Minang dan hidangan Nusantara memiliki cita rasa rempah yang begitu kaya dan mendalam. Dagingnya sangat empuk dan bumbunya meresap sempurna. Pengalaman kuliner autentik Indonesia terbaik!',
+    rating: 5,
+    favoriteMenu: 'Rendang Daging Minang & Sambal Matah',
+    verifiedBadge: 'Bintang Sepak Bola Dunia',
+  },
+  {
+    id: 'testi-verstappen',
+    name: 'Max Verstappen',
+    role: 'Juara Dunia Balap Formula 1 (F1)',
+    avatar: 'MV',
+    photo: '/assets/images/verstappen_testimonial_1794209594502.jpg',
+    comment: 'Pengiriman super cepat dan makanannya tiba dalam kondisi sangat hangat! Nasi Goreng Spesial dan Patin Bakar Bambunya memberikan energi luar biasa. Komposisi bumbu rempahnya benar-benar berkelas juara!',
+    rating: 5,
+    favoriteMenu: 'Nasi Goreng Spesial & Patin Bakar Bambu',
+    verifiedBadge: 'Juara Dunia F1',
+  },
+  {
     id: 'testi-1',
     name: 'Dimas Wicaksono',
     role: 'Karyawan Swasta, Jakarta Selatan',

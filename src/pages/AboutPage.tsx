@@ -37,7 +37,7 @@ export const AboutPage: React.FC = () => {
         <div className="lg:col-span-5 relative">
           <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-[#F2E5D7]">
             <img
-              src="/src/assets/images/hero_culinary_feast_1793604100215.jpg"
+              src="/assets/images/hero_culinary_feast_1793604100215.jpg"
               alt="Dapur RASA NUSANTARA"
               className="w-full h-[400px] object-cover"
             />

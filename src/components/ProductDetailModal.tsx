@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { PRODUCTS } from '../data/products';
-import { X, Star, Heart, Clock, Utensils, Flame, Plus, Minus, ShoppingBag, MessageSquareShare } from 'lucide-react';
+import { X, Star, Heart, Clock, Utensils, Flame, Plus, Minus, ShoppingBag, MessageSquareShare, MapPin } from 'lucide-react';
 
 export const ProductDetailModal: React.FC = () => {
   const {
@@ -35,7 +35,7 @@ export const ProductDetailModal: React.FC = () => {
 
   const handleDirectWhatsApp = () => {
     const text = encodeURIComponent(
-      `Halo RASA NUSANTARA, saya ingin memesan langsung:\n\n*${selectedProduct.name}*\nJumlah: ${quantity} porsi\nTingkat Pedas: ${spiceLevel}\nCatatan: ${notes || '-'}\nTotal: ${formatRupiah(selectedProduct.price * quantity)}\n\nMohon bantuannya untuk info pengiriman ya!`
+      `Halo RASA NUSANTARA, saya ingin memesan langsung:\n\n*${selectedProduct.name}*\nAsal Daerah: Khas ${selectedProduct.originCity || 'Nusantara'}\nJumlah: ${quantity} porsi\nTingkat Pedas: ${spiceLevel}\nCatatan: ${notes || '-'}\nTotal: ${formatRupiah(selectedProduct.price * quantity)}\n\nMohon bantuannya untuk info pengiriman ya!`
     );
     window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
   };
@@ -68,6 +68,12 @@ export const ProductDetailModal: React.FC = () => {
                 {selectedProduct.badge}
               </span>
             )}
+            {selectedProduct.originCity && (
+              <span className="text-xs font-bold px-3 py-1 rounded-md bg-[#39271F] text-white shadow-sm flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-[#E97832]" />
+                <span>Khas {selectedProduct.originCity}</span>
+              </span>
+            )}
           </div>
           <button
             onClick={() => toggleWishlist(selectedProduct.id)}
@@ -86,15 +92,24 @@ export const ProductDetailModal: React.FC = () => {
         <div className="md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto max-h-[60vh] md:max-h-[92vh]">
           <div>
             {/* Header info */}
-            <div className="flex items-center gap-3 text-xs text-stone-500 mb-2">
+            <div className="flex items-center gap-2.5 text-xs text-stone-500 mb-2 flex-wrap">
               <span className="uppercase tracking-wider font-semibold text-[#E97832]">
                 {selectedProduct.category.replace('-', ' ')}
               </span>
+              {selectedProduct.originCity && (
+                <>
+                  <span>·</span>
+                  <span className="font-semibold text-[#39271F] flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-[#E97832]" />
+                    <span>Khas {selectedProduct.originCity}</span>
+                  </span>
+                </>
+              )}
               <span>·</span>
               <div className="flex items-center gap-1 font-semibold text-[#39271F]">
                 <Star className="w-4 h-4 fill-[#E97832] text-[#E97832]" />
                 <span>{selectedProduct.rating}</span>
-                <span className="text-stone-400 font-normal">({selectedProduct.reviewCount} ulasan)</span>
+                <span className="text-stone-400 font-normal">({selectedProduct.reviewCount})</span>
               </div>
               <span>·</span>
               <div className="flex items-center gap-1 text-stone-600">
@@ -123,6 +138,19 @@ export const ProductDetailModal: React.FC = () => {
             <p className="text-sm text-stone-700 leading-relaxed mb-4">
               {selectedProduct.description}
             </p>
+
+            {/* Cultural Story / Asal Usul Daerah */}
+            {selectedProduct.culturalStory && (
+              <div className="p-3 bg-[#E97832]/8 rounded-xl border border-[#E97832]/20 mb-3.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#E97832] mb-1">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Warisan Kuliner Khas {selectedProduct.originCity}</span>
+                </div>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  {selectedProduct.culturalStory}
+                </p>
+              </div>
+            )}
 
             {/* Story / Secret */}
             <div className="p-3.5 bg-[#F2E5D7]/50 rounded-xl border border-[#F2E5D7] mb-5">

@@ -1,13 +1,23 @@
 import React, { useState, useMemo } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { CATEGORIES } from '../data/products';
+import { CITIES } from '../data/cities';
 import { useCart } from '../context/CartContext';
-import { Search, SlidersHorizontal, Heart, RotateCcw, Utensils } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, RotateCcw, Utensils, MapPin, Truck } from 'lucide-react';
 import { CategoryType } from '../types';
 
 export const MenuPage: React.FC = () => {
-  const { wishlist, searchQuery, setSearchQuery, products } = useCart();
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('semua');
+  const {
+    wishlist,
+    searchQuery,
+    setSearchQuery,
+    products,
+    selectedCityFilter,
+    setSelectedCityFilter,
+    selectedCategory,
+    setSelectedCategory,
+    setIsShippingCalcOpen,
+  } = useCart();
   const [sortBy, setSortBy] = useState<'popular' | 'price-asc' | 'price-desc' | 'rating'>('popular');
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number>(200000);
@@ -17,6 +27,14 @@ export const MenuPage: React.FC = () => {
     return products.filter((item) => {
       // Category filter
       if (selectedCategory !== 'semua' && item.category !== selectedCategory) {
+        return false;
+      }
+
+      // City filter
+      if (
+        selectedCityFilter !== 'all' &&
+        item.originCity?.toLowerCase().replace(/\s+/g, '') !== selectedCityFilter.toLowerCase().replace(/\s+/g, '')
+      ) {
         return false;
       }
 
@@ -33,10 +51,12 @@ export const MenuPage: React.FC = () => {
       // Search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
+        const cleanQuery = query.replace(/\s+/g, '');
         const matchesName = item.name.toLowerCase().includes(query);
         const matchesDesc = item.description.toLowerCase().includes(query);
+        const matchesCity = item.originCity?.toLowerCase().replace(/\s+/g, '').includes(cleanQuery);
         const matchesIngredients = item.ingredients.some((ing) => ing.toLowerCase().includes(query));
-        if (!matchesName && !matchesDesc && !matchesIngredients) {
+        if (!matchesName && !matchesDesc && !matchesCity && !matchesIngredients) {
           return false;
         }
       }
@@ -49,10 +69,11 @@ export const MenuPage: React.FC = () => {
       // Default: popular
       return b.reviewCount - a.reviewCount;
     });
-  }, [selectedCategory, showOnlyFavorites, maxPrice, searchQuery, sortBy, wishlist]);
+  }, [selectedCategory, selectedCityFilter, showOnlyFavorites, maxPrice, searchQuery, sortBy, wishlist, products]);
 
   const handleResetFilters = () => {
     setSelectedCategory('semua');
+    setSelectedCityFilter('all');
     setSortBy('popular');
     setShowOnlyFavorites(false);
     setMaxPrice(200000);
@@ -128,6 +149,16 @@ export const MenuPage: React.FC = () => {
               />
               <span>Favorit ({wishlist.length})</span>
             </button>
+
+            {/* Quick Ongkir Calculator */}
+            <button
+              onClick={() => setIsShippingCalcOpen(true)}
+              title="Kalkulator Ongkir Resmi 1 KM = Rp 5.000"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[#F2E5D7] bg-[#FFF8EF] hover:bg-[#F2E5D7] text-xs font-semibold text-[#39271F] transition-all whitespace-nowrap"
+            >
+              <Truck className="w-3.5 h-3.5 text-[#E97832]" />
+              <span>Cek Ongkir</span>
+            </button>
           </div>
         </div>
 
@@ -147,15 +178,51 @@ export const MenuPage: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {/* Regional City Filter Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-2 border-t border-[#F2E5D7]/80">
+          <div className="flex items-center gap-1 text-[11px] font-bold text-[#E97832] shrink-0 mr-1">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Khas Daerah:</span>
+          </div>
+          <button
+            onClick={() => setSelectedCityFilter('all')}
+            className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+              selectedCityFilter === 'all'
+                ? 'bg-[#E97832] text-white shadow-xs'
+                : 'bg-[#FFF8EF] text-[#39271F] hover:bg-[#F2E5D7] border border-[#F2E5D7]'
+            }`}
+          >
+            Semua Kota
+          </button>
+          {CITIES.map((city) => (
+            <button
+              key={city.id}
+              onClick={() => setSelectedCityFilter(city.name)}
+              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                selectedCityFilter.toLowerCase() === city.name.toLowerCase()
+                  ? 'bg-[#E97832] text-white shadow-xs'
+                  : 'bg-[#FFF8EF] text-[#39271F] hover:bg-[#F2E5D7] border border-[#F2E5D7]'
+              }`}
+            >
+              {city.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Result Stats & Active Filters */}
       <div className="flex items-center justify-between text-xs text-stone-500">
         <p>
           Menampilkan <span className="font-bold text-[#39271F] font-mono">{filteredProducts.length}</span> dari {products.length} menu pilihan
+          {selectedCityFilter !== 'all' && (
+            <span className="ml-2 font-medium text-[#E97832] bg-[#FFF8EF] px-2 py-0.5 rounded-full border border-[#F2E5D7]">
+              Khas {selectedCityFilter}
+            </span>
+          )}
         </p>
 
-        {(selectedCategory !== 'semua' || searchQuery || showOnlyFavorites) && (
+        {(selectedCategory !== 'semua' || selectedCityFilter !== 'all' || searchQuery || showOnlyFavorites) && (
           <button
             onClick={handleResetFilters}
             className="flex items-center gap-1 text-[#E97832] hover:underline font-medium"

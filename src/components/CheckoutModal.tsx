@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { OrderData } from '../types';
+import { SHIPPING_CITIES } from '../data/shipping';
 import { X, CheckCircle, Truck, CreditCard, QrCode, Banknote, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const CheckoutModal: React.FC = () => {
@@ -17,15 +18,38 @@ export const CheckoutModal: React.FC = () => {
     setActiveOrder,
     addOrder,
     showToast,
+    deliveryMode,
+    setDeliveryMode,
+    deliveryOriginCity,
+    setDeliveryOriginCity,
+    deliveryDestinationCity,
+    setDeliveryDestinationCity,
+    deliveryDistanceKm,
+    setDeliveryDistanceKm,
+    shippingCalculation,
+    setIsShippingCalcOpen,
+    currentUser,
+    savedAddresses,
+    setIsProfileModalOpen,
   } = useCart();
 
-  const [customerName, setCustomerName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState('');
+  const [customerName, setCustomerName] = useState(currentUser.name || '');
+  const [phoneNumber, setPhoneNumber] = useState(currentUser.phone || '');
+  const [address, setAddress] = useState(currentUser.address || '');
   const [notes, setNotes] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState<'instant' | 'sameday' | 'pickup'>('instant');
   const [paymentMethod, setPaymentMethod] = useState<'qris' | 'transfer' | 'cod'>('qris');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync whenever currentUser switches
+  React.useEffect(() => {
+    if (currentUser) {
+      setCustomerName(currentUser.name);
+      setPhoneNumber(currentUser.phone);
+      const defaultAddr = savedAddresses.find((a) => a.isDefault);
+      setAddress(defaultAddr ? defaultAddr.fullAddress : currentUser.address);
+    }
+  }, [currentUser, savedAddresses]);
 
   if (!isCheckoutOpen) return null;
 
@@ -70,6 +94,9 @@ export const CheckoutModal: React.FC = () => {
       voucherCode: appliedVoucher?.code,
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB, Hari ini',
       status: 'menunggu',
+      originCity: deliveryOriginCity,
+      destinationCity: deliveryDestinationCity,
+      distanceKm: deliveryMethod === 'pickup' ? 0 : shippingCalculation.distanceKm,
     };
 
     setTimeout(() => {
@@ -108,10 +135,22 @@ export const CheckoutModal: React.FC = () => {
         <form onSubmit={handleConfirmOrder} className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Data Pelanggan */}
           <div className="bg-white p-4 rounded-2xl border border-[#F2E5D7] space-y-3.5">
-            <h3 className="text-sm font-bold text-[#39271F] flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-[#E97832] text-white flex items-center justify-center text-xs">1</span>
-              Informasi Pemesan
-            </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-[#39271F] flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#E97832] text-white flex items-center justify-center text-xs">1</span>
+                Informasi Pemesan
+              </h3>
+
+              <button
+                type="button"
+                onClick={() => setIsProfileModalOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FFF8EF] hover:bg-sky-50 border border-[#6CABDD]/40 text-[11px] font-bold text-[#001838] transition-colors"
+              >
+                <img src={currentUser.avatar} alt={currentUser.name} className="w-4 h-4 rounded-full object-cover" />
+                <span>{currentUser.name.split(' ')[0]}</span>
+                <span className="text-[#E97832] underline ml-0.5">Ganti Akun</span>
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -144,10 +183,36 @@ export const CheckoutModal: React.FC = () => {
             </div>
 
             {deliveryMethod !== 'pickup' && (
-              <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Alamat Pengiriman & Patokan *
-                </label>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <label className="block text-xs font-semibold text-stone-700">
+                    Alamat Pengiriman & Patokan *
+                  </label>
+                  {savedAddresses.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] text-stone-500">Pilih Cepat:</span>
+                      {savedAddresses.map((sa) => (
+                        <button
+                          key={sa.id}
+                          type="button"
+                          onClick={() => {
+                            setAddress(sa.fullAddress);
+                            setCustomerName(sa.receiverName);
+                            setPhoneNumber(sa.phone);
+                            setDeliveryDestinationCity(sa.city);
+                          }}
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold border transition-colors ${
+                            address === sa.fullAddress
+                              ? 'bg-[#E97832] text-white border-[#E97832]'
+                              : 'bg-[#FFF8EF] text-[#39271F] border-[#F2E5D7] hover:border-[#E97832]'
+                          }`}
+                        >
+                          {sa.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <textarea
                   required
                   rows={2}
@@ -229,6 +294,105 @@ export const CheckoutModal: React.FC = () => {
                 <p className="text-[11px] text-stone-500">Pick-up langsung di resto (Gratis)</p>
               </button>
             </div>
+
+            {deliveryMethod !== 'pickup' && (
+              <div className="pt-3 border-t border-[#F2E5D7] space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#39271F] flex items-center gap-1.5">
+                    <Truck className="w-4 h-4 text-[#E97832]" />
+                    <span>Jarak & Rute Pengiriman (1 KM = Rp 5.000)</span>
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsShippingCalcOpen(true)}
+                    className="text-[11px] font-semibold text-[#E97832] hover:underline"
+                  >
+                    Buka Kalkulator Lengkap →
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 bg-[#FFF8EF] p-1 rounded-xl border border-[#F2E5D7]">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMode('dalam-kota')}
+                    className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                      deliveryMode === 'dalam-kota'
+                        ? 'bg-white text-[#E97832] shadow-xs'
+                        : 'text-stone-600'
+                    }`}
+                  >
+                    Dalam Kota
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMode('antar-kota')}
+                    className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                      deliveryMode === 'antar-kota'
+                        ? 'bg-white text-[#E97832] shadow-xs'
+                        : 'text-stone-600'
+                    }`}
+                  >
+                    Antar Kota
+                  </button>
+                </div>
+
+                {deliveryMode === 'dalam-kota' ? (
+                  <div className="space-y-2 p-3 bg-[#FFF8EF]/60 rounded-xl border border-[#F2E5D7]">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-600 font-medium">Jarak dari Dapur Terdekat:</span>
+                      <span className="font-mono font-bold text-[#E97832]">
+                        {deliveryDistanceKm} KM ({formatRupiah(deliveryDistanceKm * 5000)})
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={30}
+                      value={deliveryDistanceKm}
+                      onChange={(e) => setDeliveryDistanceKm(Number(e.target.value))}
+                      className="w-full accent-[#E97832] cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-stone-400 font-mono">
+                      <span>1 km (Rp 5.000)</span>
+                      <span>15 km (Rp 75.000)</span>
+                      <span>30 km (Rp 150.000)</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2 p-3 bg-[#FFF8EF]/60 rounded-xl border border-[#F2E5D7] text-xs">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-stone-600 mb-1">Kota Asal:</label>
+                      <select
+                        value={deliveryOriginCity}
+                        onChange={(e) => setDeliveryOriginCity(e.target.value)}
+                        className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-[#F2E5D7] bg-white text-[#39271F]"
+                      >
+                        {SHIPPING_CITIES.map((c) => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-stone-600 mb-1">Kota Tujuan:</label>
+                      <select
+                        value={deliveryDestinationCity}
+                        onChange={(e) => setDeliveryDestinationCity(e.target.value)}
+                        className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-[#F2E5D7] bg-white text-[#39271F]"
+                      >
+                        {SHIPPING_CITIES.map((c) => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-span-2 pt-1 flex justify-between items-center text-[11px] text-stone-600">
+                      <span>Jarak Antar-Kota: <strong className="font-mono text-[#E97832]">{shippingCalculation.distanceKm} KM</strong></span>
+                      <span className="font-mono font-bold text-[#E97832]">{formatRupiah(shippingCalculation.deliveryFee)}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Metode Pembayaran */}

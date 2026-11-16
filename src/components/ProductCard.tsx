@@ -94,12 +94,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Content */}
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
-          {/* Metadata: Category & Rating */}
+          {/* Metadata: Category, City & Rating */}
           <div className="flex items-center justify-between text-xs text-[#39271F]/70 mb-1.5">
-            <span className="font-medium tracking-wide uppercase text-[11px]">
-              {getCategoryLabel(product.category)}
-            </span>
-            <div className="flex items-center gap-1 text-[#39271F] font-semibold tabular-nums">
+            <div className="flex items-center gap-1.5 truncate">
+              <span className="font-medium tracking-wide uppercase text-[11px]">
+                {getCategoryLabel(product.category)}
+              </span>
+              {product.originCity && (
+                <>
+                  <span className="text-stone-300">·</span>
+                  <span className="text-[11px] font-semibold text-[#E97832] truncate">
+                    Khas {product.originCity}
+                  </span>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-1 text-[#39271F] font-semibold tabular-nums shrink-0 ml-1">
               <Star className="w-3.5 h-3.5 fill-[#E97832] text-[#E97832]" />
               <span>{product.rating}</span>
               <span className="text-stone-400 font-normal">({product.reviewCount})</span>

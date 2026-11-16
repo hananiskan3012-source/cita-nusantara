@@ -16,18 +16,22 @@ export const OrderConfirmationModal: React.FC = () => {
       .map((it) => `• ${it.product.name} x${it.quantity} (${it.selectedSpice || 'Standar'})`)
       .join('\n');
 
+    const deliveryRouteInfo = activeOrder.distanceKm
+      ? `Pengiriman: ${activeOrder.deliveryMethod.toUpperCase()} (${activeOrder.distanceKm} km x Rp 5.000)\nRute: ${activeOrder.originCity || 'Dapur Pusat'} → ${activeOrder.destinationCity || 'Tujuan'}\n`
+      : `Pengiriman: ${activeOrder.deliveryMethod.toUpperCase()}\n`;
+
     const msg = encodeURIComponent(
       `*PESANAN BARU - RASA NUSANTARA*\n` +
       `No. Pesanan: *#${activeOrder.orderId}*\n` +
       `Nama: ${activeOrder.customerName}\n` +
       `No. WA: ${activeOrder.phoneNumber}\n` +
       `Alamat: ${activeOrder.address}\n` +
-      `Pengiriman: ${activeOrder.deliveryMethod.toUpperCase()}\n` +
+      deliveryRouteInfo +
       `Pembayaran: ${activeOrder.paymentMethod.toUpperCase()}\n\n` +
       `*Rincian Menu:*\n${itemList}\n\n` +
       `Subtotal: ${formatRupiah(activeOrder.subtotal)}\n` +
       (activeOrder.discount > 0 ? `Diskon: -${formatRupiah(activeOrder.discount)}\n` : '') +
-      `Ongkir: ${formatRupiah(activeOrder.deliveryFee)}\n` +
+      `Ongkir (${activeOrder.distanceKm || 3} km x Rp 5.000): ${formatRupiah(activeOrder.deliveryFee)}\n` +
       `*TOTAL: ${formatRupiah(activeOrder.total)}*\n\n` +
       `Catatan: ${activeOrder.notes || '-'}\n\n` +
       `Halo admin RASA NUSANTARA, mohon segera diproses ya! Terima kasih banyak.`
@@ -68,6 +72,15 @@ export const OrderConfirmationModal: React.FC = () => {
             <span className="text-stone-500">Waktu Pemesanan</span>
             <span className="text-[#39271F] font-medium">{activeOrder.timestamp}</span>
           </div>
+
+          {activeOrder.distanceKm && (
+            <div className="flex justify-between items-center text-xs border-b border-[#F2E5D7] pb-2.5">
+              <span className="text-stone-500">Rute & Jarak (Rp 5.000/km)</span>
+              <span className="text-[#E97832] font-semibold font-mono">
+                {activeOrder.originCity || 'Dapur'} → {activeOrder.destinationCity || 'Tujuan'} ({activeOrder.distanceKm} km)
+              </span>
+            </div>
+          )}
 
           <div className="flex justify-between items-center text-xs border-b border-[#F2E5D7] pb-2.5">
             <span className="text-stone-500">Estimasi Pengantaran</span>

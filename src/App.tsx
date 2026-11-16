@@ -16,12 +16,15 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { OrderConfirmationModal } from './components/OrderConfirmationModal';
+import { ShippingCalculatorModal } from './components/ShippingCalculatorModal';
+import { UserProfileModal } from './components/UserProfileModal';
+import { WelcomeGreetingWidget } from './components/WelcomeGreetingWidget';
 import { ToastContainer } from './components/Toast';
 import { AdminPanel } from './components/AdminPanel';
-import { Sparkles, X, MessageCircle, ShieldCheck } from 'lucide-react';
+import { Sparkles, X, MessageCircle, ShieldCheck, Calculator } from 'lucide-react';
 
 const MainContent: React.FC = () => {
-  const { activeTab, setActiveTab, storeSettings, setIsAdminOpen } = useCart();
+  const { activeTab, setActiveTab, storeSettings, setIsAdminOpen, setIsShippingCalcOpen } = useCart();
   const [dismissAnnouncement, setDismissAnnouncement] = useState(false);
 
   const shouldShowAnnouncement = storeSettings.showAnnouncement && !dismissAnnouncement;
@@ -34,6 +37,12 @@ const MainContent: React.FC = () => {
           <div className="flex-1 text-center font-medium flex items-center justify-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-[#E97832]" />
             <span>{storeSettings.announcement}</span>
+            <button
+              onClick={() => setIsShippingCalcOpen(true)}
+              className="ml-2 underline font-bold text-[#E97832] hover:text-[#ff9553] cursor-pointer"
+            >
+              Cek Tarif
+            </button>
           </div>
           <button
             onClick={() => setDismissAnnouncement(true)}
@@ -62,6 +71,9 @@ const MainContent: React.FC = () => {
       <CartDrawer />
       <CheckoutModal />
       <OrderConfirmationModal />
+      <ShippingCalculatorModal />
+      <UserProfileModal />
+      <WelcomeGreetingWidget />
       <ToastContainer />
       <AdminPanel />
 

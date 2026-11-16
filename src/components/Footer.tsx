@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { MapPin, Phone, Mail, Clock, Instagram, ShieldCheck, Heart } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 export const Footer: React.FC = () => {
   const { setActiveTab, storeSettings, setIsAdminOpen } = useCart();
@@ -16,12 +17,7 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[#FFF8EF]/15">
           {/* Col 1: Brand & Filosofi */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-[#E97832]" />
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#FFF8EF]">
-                {storeSettings.storeName}
-              </span>
-            </div>
+            <BrandLogo textColor="text-[#FFF8EF]" subtextColor="text-[#6CABDD]" size="md" />
             <p className="text-xs text-[#FFF8EF]/80 italic">
               "{storeSettings.tagline}"
             </p>

@@ -68,7 +68,7 @@ export const Hero: React.FC = () => {
           <div className="lg:col-span-6 relative flex items-center">
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-[#F2E5D7]">
               <img
-                src="/src/assets/images/hero_culinary_feast_1793604100215.jpg"
+                src="/assets/images/hero_culinary_feast_1793604100215.jpg"
                 alt="Feast Makanan Tradisional Nusantara RASA NUSANTARA"
                 className="w-full h-[400px] sm:h-[480px] lg:h-[520px] object-cover"
                 loading="eager"
@@ -106,23 +106,23 @@ export const Hero: React.FC = () => {
 
           <div className="p-2 border-r last:border-r-0 border-[#F2E5D7]">
             <div className="text-2xl sm:text-3xl font-bold font-serif text-[#39271F] tabular-nums">
-              18.500<span className="text-[#E97832]">+</span>
+              20<span className="text-[#E97832]">+</span>
             </div>
-            <p className="text-xs text-stone-500 mt-0.5">Porsi Terjual Bulanan</p>
+            <p className="text-xs text-stone-500 mt-0.5">Kota Kuliner Khas Nusantara</p>
           </div>
 
           <div className="p-2 border-r last:border-r-0 border-[#F2E5D7]">
             <div className="text-2xl sm:text-3xl font-bold font-serif text-[#39271F] tabular-nums">
-              100<span className="text-[#66734B]">%</span>
+              5.000<span className="text-[#66734B] text-xs font-sans font-bold ml-1">Rp/KM</span>
             </div>
-            <p className="text-xs text-stone-500 mt-0.5">Bahan Segar Petani Lokal</p>
+            <p className="text-xs text-stone-500 mt-0.5">Tarif Ongkir Sesuai Jarak</p>
           </div>
 
           <div className="p-2">
             <div className="text-2xl sm:text-3xl font-bold font-serif text-[#39271F] tabular-nums">
               30<span className="text-[#E97832] font-sans text-sm font-semibold ml-1">Mnt</span>
             </div>
-            <p className="text-xs text-stone-500 mt-0.5">Rata-rata Pengantaran Hangat</p>
+            <p className="text-xs text-stone-500 mt-0.5">Rata-rata Tiba Masih Hangat</p>
           </div>
         </div>
       </div>
