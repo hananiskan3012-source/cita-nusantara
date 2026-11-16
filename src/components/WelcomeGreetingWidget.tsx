@@ -201,25 +201,25 @@ export const WelcomeGreetingWidget: React.FC = () => {
   // Minimized floating thumbnail pill at bottom-right
   if (isMinimized) {
     return (
-      <div className="fixed bottom-5 right-5 z-40 animate-fadeIn">
+      <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 max-w-[calc(100vw-6.75rem)] sm:max-w-none animate-fadeIn">
         <button
           onClick={() => setIsMinimized(false)}
           title="Buka Salam Pembuka & Ganti Foto"
-          className="group flex items-center gap-2.5 bg-white hover:bg-[#FFF8EF] p-1.5 pr-3.5 rounded-full shadow-xl border-2 border-[#6CABDD]/60 hover:border-[#E97832] transition-all hover:scale-105"
+          className="group flex items-center gap-2 sm:gap-2.5 bg-white hover:bg-[#FFF8EF] p-1.5 pr-3 sm:pr-3.5 rounded-full shadow-xl border-2 border-[#6CABDD]/60 hover:border-[#E97832] transition-all hover:scale-105 max-w-full"
         >
-          <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#E97832]/40 shrink-0 bg-stone-100">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-[#E97832]/40 shrink-0 bg-stone-100">
             <img
               src={welcomePhoto}
               alt="Foto Pembuka Salam"
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="text-left">
-            <div className="text-[11px] font-bold text-[#39271F] leading-tight flex items-center gap-1">
-              <span>{getTimeGreeting()}!</span>
-              <Sparkles className="w-3 h-3 text-[#E97832]" />
+          <div className="text-left min-w-0">
+            <div className="text-[11px] font-bold text-[#39271F] leading-tight flex items-center gap-1 truncate">
+              <span className="truncate">{getTimeGreeting()}!</span>
+              <Sparkles className="w-3 h-3 text-[#E97832] shrink-0" />
             </div>
-            <div className="text-[9px] text-stone-500 font-medium">Klik buka salam / ganti foto</div>
+            <div className="text-[9px] text-stone-500 font-medium truncate">Klik buka / ganti foto</div>
           </div>
         </button>
       </div>
@@ -227,7 +227,7 @@ export const WelcomeGreetingWidget: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[330px] animate-fadeIn">
+    <div className="fixed bottom-16 inset-x-3 sm:inset-x-auto sm:bottom-5 sm:right-5 z-40 sm:w-[330px] animate-fadeIn">
       <div className="bg-white rounded-2xl shadow-2xl border border-[#F2E5D7] overflow-hidden">
         {/* Top Accent Stripe (Man City Sky Blue x Red Bull Crimson x Rasa Nusantara Orange) */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#6CABDD] via-[#E97832] to-[#DE0029]" />

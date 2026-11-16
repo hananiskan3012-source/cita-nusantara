@@ -80,7 +80,7 @@ export const CityExplorerSection: React.FC = () => {
       </div>
 
       {/* Island Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#F2E5D7]/80">
+      <div className="w-full min-w-0 max-w-full flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-pan-x pb-1.5 border-b border-[#F2E5D7]/80">
         <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mr-1 shrink-0">
           Wilayah:
         </span>
@@ -88,7 +88,7 @@ export const CityExplorerSection: React.FC = () => {
           <button
             key={island.id}
             onClick={() => setSelectedIsland(island.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
               selectedIsland === island.id
                 ? 'bg-[#39271F] text-white shadow-xs'
                 : 'bg-white text-stone-600 hover:text-[#39271F] border border-[#F2E5D7]'
@@ -149,12 +149,12 @@ export const CityExplorerSection: React.FC = () => {
       </div>
 
       {/* Selected City Spotlight Banner & Dishes */}
-      <div className="bg-[#FFF8EF] rounded-3xl border border-[#F2E5D7] p-6 sm:p-8 shadow-sm space-y-8">
+      <div className="bg-[#FFF8EF] rounded-3xl border border-[#F2E5D7] p-4 sm:p-8 shadow-sm space-y-6 sm:space-y-8">
         {/* City Info Header */}
-        <div className="bg-white rounded-2xl p-6 border border-[#F2E5D7] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
-          <div className="space-y-2 max-w-2xl">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-[#F2E5D7] flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 shadow-sm">
+          <div className="space-y-2 max-w-2xl min-w-0">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#E97832]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E97832] shrink-0" />
               <span className="text-xs font-bold text-[#E97832] uppercase tracking-wider">
                 Kuliner Asli Kota {activeCity.name} · {activeCity.province} ({activeCity.island})
               </span>
@@ -180,12 +180,12 @@ export const CityExplorerSection: React.FC = () => {
 
         {/* Dishes from this City */}
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h4 className="font-serif text-base sm:text-lg font-bold text-[#39271F] flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#E97832]" />
+              <Sparkles className="w-4 h-4 text-[#E97832] shrink-0" />
               <span>Daftar Hidangan Tradisional Khas {activeCity.name}</span>
             </h4>
-            <span className="text-xs text-stone-500 font-mono">
+            <span className="text-xs text-stone-500 font-mono shrink-0">
               {cityProducts.length} Pilihan Masakan
             </span>
           </div>

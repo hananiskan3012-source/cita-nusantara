@@ -33,7 +33,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="group relative bg-white rounded-2xl border border-[#F2E5D7] overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1">
       {/* Media container */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#F2E5D7]/50">
+      <div
+        onClick={() => setSelectedProduct(product)}
+        className="relative aspect-[4/3] w-full overflow-hidden bg-[#F2E5D7]/50 cursor-pointer"
+      >
         <img
           src={product.image}
           alt={product.name}
@@ -132,9 +135,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Pricing and Add CTA */}
-        <div className="pt-3 border-t border-[#F2E5D7] flex items-center justify-between gap-2">
-          <div>
-            <div className="flex items-baseline gap-1.5">
+        <div className="pt-3 border-t border-[#F2E5D7] flex items-center justify-between gap-2 min-w-0">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-baseline gap-1.5">
               <span className="text-base font-bold text-[#39271F] font-mono tabular-nums">
                 {formatRupiah(product.price)}
               </span>
@@ -144,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
-            <span className="text-[11px] text-stone-500 block">
+            <span className="text-[11px] text-stone-500 block truncate">
               {product.portion.split('(')[0]}
             </span>
           </div>
@@ -153,7 +156,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             onClick={() => addToCart(product, 1)}
             disabled={product.isAvailable === false}
             aria-label={`Tambah ${product.name} ke keranjang`}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all ${
+            className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all ${
               product.isAvailable === false
                 ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                 : 'bg-[#E97832] hover:bg-[#D66723] text-white hover:shadow active:scale-95'

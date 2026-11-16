@@ -120,12 +120,12 @@ export const MenuPage: React.FC = () => {
           </div>
 
           {/* Sort By Dropdown */}
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-stone-500 shrink-0" />
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 min-w-0">
+            <SlidersHorizontal className="w-4 h-4 text-stone-500 shrink-0 hidden sm:block" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="text-xs px-3 py-2.5 rounded-xl border border-[#F2E5D7] bg-[#FFF8EF] text-[#39271F] font-medium focus:outline-none focus:ring-2 focus:ring-[#E97832]/30"
+              className="flex-1 sm:flex-initial min-w-0 text-xs px-3 py-2.5 rounded-xl border border-[#F2E5D7] bg-[#FFF8EF] text-[#39271F] font-medium focus:outline-none focus:ring-2 focus:ring-[#E97832]/30"
             >
               <option value="popular">Urutkan: Terpopuler</option>
               <option value="rating">Urutkan: Rating Tertinggi</option>
@@ -136,7 +136,7 @@ export const MenuPage: React.FC = () => {
             {/* Favorite Filter Toggle */}
             <button
               onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
                 showOnlyFavorites
                   ? 'bg-[#E97832] text-white border-[#E97832]'
                   : 'bg-[#FFF8EF] text-[#39271F] border-[#F2E5D7] hover:border-stone-400'
@@ -154,7 +154,7 @@ export const MenuPage: React.FC = () => {
             <button
               onClick={() => setIsShippingCalcOpen(true)}
               title="Kalkulator Ongkir Resmi 1 KM = Rp 5.000"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[#F2E5D7] bg-[#FFF8EF] hover:bg-[#F2E5D7] text-xs font-semibold text-[#39271F] transition-all whitespace-nowrap"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[#F2E5D7] bg-[#FFF8EF] hover:bg-[#F2E5D7] text-xs font-semibold text-[#39271F] transition-all whitespace-nowrap shrink-0"
             >
               <Truck className="w-3.5 h-3.5 text-[#E97832]" />
               <span>Cek Ongkir</span>
@@ -163,12 +163,12 @@ export const MenuPage: React.FC = () => {
         </div>
 
         {/* Category Segmented Buttons */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 border-t border-[#F2E5D7]">
+        <div className="w-full min-w-0 max-w-full flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x pb-1 pt-2 border-t border-[#F2E5D7]">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id as CategoryType)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0 ${
                 selectedCategory === cat.id
                   ? 'bg-[#39271F] text-white shadow-sm'
                   : 'bg-[#FFF8EF] text-[#39271F] hover:bg-[#F2E5D7] border border-[#F2E5D7]'
@@ -180,14 +180,14 @@ export const MenuPage: React.FC = () => {
         </div>
 
         {/* Regional City Filter Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-2 border-t border-[#F2E5D7]/80">
+        <div className="w-full min-w-0 max-w-full flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x pb-1 pt-2 border-t border-[#F2E5D7]/80">
           <div className="flex items-center gap-1 text-[11px] font-bold text-[#E97832] shrink-0 mr-1">
             <MapPin className="w-3.5 h-3.5" />
             <span>Khas Daerah:</span>
           </div>
           <button
             onClick={() => setSelectedCityFilter('all')}
-            className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+            className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap shrink-0 ${
               selectedCityFilter === 'all'
                 ? 'bg-[#E97832] text-white shadow-xs'
                 : 'bg-[#FFF8EF] text-[#39271F] hover:bg-[#F2E5D7] border border-[#F2E5D7]'
@@ -199,7 +199,7 @@ export const MenuPage: React.FC = () => {
             <button
               key={city.id}
               onClick={() => setSelectedCityFilter(city.name)}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap shrink-0 ${
                 selectedCityFilter.toLowerCase() === city.name.toLowerCase()
                   ? 'bg-[#E97832] text-white shadow-xs'
                   : 'bg-[#FFF8EF] text-[#39271F] hover:bg-[#F2E5D7] border border-[#F2E5D7]'

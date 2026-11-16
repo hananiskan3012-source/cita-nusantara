@@ -30,16 +30,16 @@ const MainContent: React.FC = () => {
   const shouldShowAnnouncement = storeSettings.showAnnouncement && !dismissAnnouncement;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFF8EF] text-[#39271F] font-sans selection:bg-[#E97832] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip flex flex-col bg-[#FFF8EF] text-[#39271F] font-sans selection:bg-[#E97832] selection:text-white">
       {/* Dynamic Top Promotional Banner */}
       {shouldShowAnnouncement && (
-        <div className="bg-[#39271F] text-[#FFF8EF] text-[11px] sm:text-xs py-2 px-4 flex items-center justify-between border-b border-[#39271F]/40 relative z-50">
-          <div className="flex-1 text-center font-medium flex items-center justify-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#E97832]" />
-            <span>{storeSettings.announcement}</span>
+        <div className="bg-[#39271F] text-[#FFF8EF] text-[11px] sm:text-xs py-2 px-3 sm:px-4 flex items-center justify-between gap-2 border-b border-[#39271F]/40 relative z-50">
+          <div className="flex-1 min-w-0 text-center font-medium flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#E97832] shrink-0 hidden sm:inline" />
+            <span className="break-words">{storeSettings.announcement}</span>
             <button
               onClick={() => setIsShippingCalcOpen(true)}
-              className="ml-2 underline font-bold text-[#E97832] hover:text-[#ff9553] cursor-pointer"
+              className="underline font-bold text-[#E97832] hover:text-[#ff9553] cursor-pointer shrink-0"
             >
               Cek Tarif
             </button>
@@ -47,7 +47,7 @@ const MainContent: React.FC = () => {
           <button
             onClick={() => setDismissAnnouncement(true)}
             aria-label="Tutup pengumuman"
-            className="text-[#FFF8EF]/60 hover:text-white p-1"
+            className="text-[#FFF8EF]/60 hover:text-white p-1 shrink-0"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -58,7 +58,7 @@ const MainContent: React.FC = () => {
       <Navbar />
 
       {/* Main Page View */}
-      <main className="flex-1">
+      <main className="flex-1 w-full min-w-0">
         {activeTab === 'home' && <HomePage />}
         {activeTab === 'menu' && <MenuPage />}
         {activeTab === 'promo' && <PromoPage />}
@@ -78,13 +78,13 @@ const MainContent: React.FC = () => {
       <AdminPanel />
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5">
+      <div className="fixed bottom-3 left-3 sm:bottom-6 sm:left-6 z-40 flex items-center gap-2">
         <a
           href={`https://wa.me/${storeSettings.whatsappNumber}?text=Halo%20RASA%20NUSANTARA,%20saya%20ingin%20bertanya%20seputar%20menu`}
           target="_blank"
           rel="noreferrer"
           aria-label="Chat WhatsApp RASA NUSANTARA"
-          className="bg-[#25D366] hover:bg-[#20ba59] text-white p-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
+          className="bg-[#25D366] hover:bg-[#20ba59] text-white p-3 sm:p-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
         >
           <MessageCircle className="w-5 h-5" />
           <span className="hidden sm:inline-block max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 text-xs font-bold pl-0 group-hover:pl-1">
@@ -95,7 +95,7 @@ const MainContent: React.FC = () => {
         {/* Quick Admin Access Button */}
         <button
           onClick={() => setIsAdminOpen(true)}
-          className="bg-[#39271F] hover:bg-[#2a1b14] text-[#FFF8EF] border border-[#F2E5D7] px-3.5 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-1.5 text-xs font-semibold"
+          className="bg-[#39271F] hover:bg-[#2a1b14] text-[#FFF8EF] border border-[#F2E5D7] px-3 py-2.5 sm:px-3.5 sm:py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-1.5 text-xs font-semibold"
           title="Buka Panel Admin & Manajemen Toko"
         >
           <ShieldCheck className="w-4 h-4 text-[#E97832]" />

@@ -18,6 +18,26 @@
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+#root {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 h1, h2, h3, .font-serif {
   font-family: "Playfair Display", Georgia, serif;
 }

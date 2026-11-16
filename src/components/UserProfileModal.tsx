@@ -230,12 +230,12 @@ export const UserProfileModal: React.FC = () => {
           </div>
 
           {/* Quick Account Switcher Ribbon */}
-          <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between gap-2 overflow-x-auto pb-1 text-xs">
+          <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between gap-2 min-w-0 text-xs">
             <span className="text-[11px] text-sky-200 uppercase tracking-wider font-bold shrink-0 flex items-center gap-1">
               <RefreshCw className="w-3.5 h-3.5 text-amber-300" />
               Ganti Akun:
             </span>
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-pan-x min-w-0 pb-0.5">
               {users.map((u) => (
                 <button
                   key={u.id}
@@ -267,7 +267,7 @@ export const UserProfileModal: React.FC = () => {
         </div>
 
         {/* Modal Content Tabs */}
-        <div className="flex items-center border-b border-[#F2E5D7] bg-[#F2E5D7]/40 px-4 shrink-0 overflow-x-auto">
+        <div className="flex items-center border-b border-[#F2E5D7] bg-[#F2E5D7]/40 px-3 sm:px-4 shrink-0 overflow-x-auto scrollbar-none touch-pan-x">
           <button
             onClick={() => setActiveTab('profile')}
             className={`py-3 px-3.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
@@ -561,16 +561,16 @@ export const UserProfileModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between border-t border-[#F2E5D7]">
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#F2E5D7]">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span className="text-[11px] text-stone-500">
                     Tersimpan lokal di browser (Aman & Privat)
                   </span>
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#E97832] hover:bg-[#d66a27] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-[#E97832] hover:bg-[#d66a27] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Simpan Perubahan Profil</span>

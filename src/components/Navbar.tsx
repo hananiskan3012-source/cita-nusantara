@@ -33,12 +33,12 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#FFF8EF]/95 backdrop-blur-md border-b border-[#F2E5D7] transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 w-full bg-[#FFF8EF]/95 backdrop-blur-md border-b border-[#F2E5D7] transition-all">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
           {/* Zone 1: Man City x Red Bull Inspired Hybrid Brand Emblem & Wordmark */}
           <button
             onClick={() => handleNavClick('home')}
-            className="text-left transition-transform hover:scale-[1.02] shrink-0"
+            className="text-left transition-transform hover:scale-[1.02] min-w-0 flex-1 sm:flex-initial"
             title="RASA NUSANTARA - City & Bull Spirit"
           >
             <BrandLogo size="md" />
@@ -65,12 +65,12 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Zone 3: Actions Group */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             {/* User Profile Button */}
             <button
               onClick={() => setIsProfileModalOpen(true)}
               title={`Akun: ${currentUser.name} (${currentUser.tier}) - Klik untuk ganti akun / edit profil`}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-[#6CABDD]/40 bg-white hover:border-[#E97832] hover:bg-sky-50/50 shadow-xs transition-all group"
+              className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-xl border border-[#6CABDD]/40 bg-white hover:border-[#E97832] hover:bg-sky-50/50 shadow-xs transition-all group"
             >
               <div className="relative w-7 h-7 rounded-lg overflow-hidden ring-1 ring-[#6CABDD] shrink-0">
                 <img
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setIsAdminOpen(true)}
               aria-label="Panel Admin"
               title="Panel Admin Toko"
-              className="p-2 text-[#39271F]/70 hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50"
+              className="hidden sm:inline-flex p-2 text-[#39271F]/70 hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50"
             >
               <span className="text-[10px] font-bold border border-[#39271F]/30 px-1.5 py-0.5 rounded uppercase tracking-wider">
                 Admin
@@ -116,7 +116,7 @@ export const Navbar: React.FC = () => {
               onClick={() => handleNavClick('menu')}
               aria-label="Menu Favorit"
               title="Menu Favorit"
-              className="relative p-2 text-[#39271F]/80 hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50"
+              className="relative p-1.5 sm:p-2 text-[#39271F]/80 hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50"
             >
               <Heart className="w-5 h-5" />
               {wishlist.length > 0 && (
@@ -130,11 +130,11 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label="Keranjang Belanja"
-              className="relative p-2 text-[#39271F] hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50 flex items-center gap-1.5"
+              className="relative p-1.5 sm:p-2 text-[#39271F] hover:text-[#E97832] transition-colors rounded-lg hover:bg-[#F2E5D7]/50 flex items-center gap-1"
             >
               <ShoppingBag className="w-5 h-5" />
               {totalItems > 0 && (
-                <span className="bg-[#E97832] text-white text-xs font-bold px-1.5 py-0.2 rounded-full tabular-nums">
+                <span className="bg-[#E97832] text-white text-[11px] font-bold px-1.5 py-0.2 rounded-full tabular-nums">
                   {totalItems}
                 </span>
               )}
@@ -152,7 +152,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Menu"
-              className="lg:hidden p-2 text-[#39271F] hover:text-[#E97832] transition-colors rounded-lg"
+              className="lg:hidden p-1.5 sm:p-2 text-[#39271F] hover:text-[#E97832] transition-colors rounded-lg"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

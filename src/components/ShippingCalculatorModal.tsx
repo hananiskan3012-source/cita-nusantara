@@ -61,16 +61,16 @@ export const ShippingCalculatorModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
-      <div className="relative w-full max-w-xl bg-[#FFF8EF] rounded-3xl shadow-2xl border border-[#F2E5D7] overflow-hidden my-6 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-xl bg-[#FFF8EF] rounded-3xl shadow-2xl border border-[#F2E5D7] overflow-hidden my-auto max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 bg-white border-b border-[#F2E5D7] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#FFF8EF] text-[#E97832] flex items-center justify-center border border-[#F2E5D7]">
+        <div className="px-4 sm:px-6 py-4 bg-white border-b border-[#F2E5D7] flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-[#FFF8EF] text-[#E97832] flex items-center justify-center border border-[#F2E5D7] shrink-0">
               <Calculator className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="font-serif text-lg font-bold text-[#39271F] leading-snug">
+            <div className="min-w-0">
+              <h3 className="font-serif text-base sm:text-lg font-bold text-[#39271F] leading-snug truncate">
                 Kalkulator Ongkos Kirim Resmi
               </h3>
               <p className="text-[11px] text-stone-500">
@@ -80,14 +80,14 @@ export const ShippingCalculatorModal: React.FC = () => {
           </div>
           <button
             onClick={() => setIsShippingCalcOpen(false)}
-            className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors"
+            className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6">
           {/* Mode Switcher */}
           <div className="grid grid-cols-2 gap-2 bg-[#F2E5D7]/50 p-1.5 rounded-2xl border border-[#F2E5D7]">
             <button
@@ -213,17 +213,17 @@ export const ShippingCalculatorModal: React.FC = () => {
           )}
 
           {/* Real-time Calculation Result Box */}
-          <div className="bg-gradient-to-br from-[#39271F] to-[#4c352a] text-[#FFF8EF] p-5 rounded-2xl shadow-lg border border-stone-800 space-y-3">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div>
+          <div className="bg-gradient-to-br from-[#39271F] to-[#4c352a] text-[#FFF8EF] p-4 sm:p-5 rounded-2xl shadow-lg border border-stone-800 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+              <div className="min-w-0">
                 <span className="text-[10px] text-[#FFF8EF]/60 uppercase tracking-widest block font-bold">
                   {preview.serviceName}
                 </span>
-                <h4 className="font-serif text-lg font-bold text-white mt-0.5">
+                <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-0.5 break-words">
                   Rute: {preview.originCity} {activeMode === 'antar-kota' ? `→ ${preview.destinationCity}` : '(Area Sekitar)'}
                 </h4>
               </div>
-              <div className="text-right">
+              <div className="sm:text-right shrink-0">
                 <span className="text-[10px] text-[#FFF8EF]/70 block font-mono">
                   {preview.distanceKm} km x Rp 5.000
                 </span>

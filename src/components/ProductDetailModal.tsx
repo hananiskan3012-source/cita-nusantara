@@ -44,19 +44,19 @@ export const ProductDetailModal: React.FC = () => {
   const recommendations = products.filter((p) => p.id !== selectedProduct.id && p.isAvailable !== false).slice(0, 3);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-[#FFF8EF] rounded-3xl shadow-2xl border border-[#F2E5D7] overflow-hidden my-8 max-h-[92vh] flex flex-col md:flex-row">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-4xl bg-[#FFF8EF] rounded-3xl shadow-2xl border border-[#F2E5D7] overflow-hidden my-auto max-h-[92vh] flex flex-col md:flex-row">
         {/* Close Button */}
         <button
           onClick={() => setSelectedProduct(null)}
-          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-white/90 hover:bg-white text-[#39271F] shadow-md transition-transform active:scale-90"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 hover:bg-white text-[#39271F] shadow-md transition-transform active:scale-90"
           aria-label="Tutup"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Left Side: Product Image & Badges */}
-        <div className="md:w-1/2 relative bg-[#F2E5D7]/40 min-h-[300px] md:min-h-full">
+        <div className="md:w-1/2 relative bg-[#F2E5D7]/40 h-52 sm:h-72 md:h-auto shrink-0">
           <img
             src={selectedProduct.image}
             alt={selectedProduct.name}
@@ -89,7 +89,7 @@ export const ProductDetailModal: React.FC = () => {
         </div>
 
         {/* Right Side: Product Details & Purchase Form */}
-        <div className="md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto max-h-[60vh] md:max-h-[92vh]">
+        <div className="md:w-1/2 p-4 sm:p-6 md:p-8 flex-1 flex flex-col justify-between overflow-y-auto min-w-0">
           <div>
             {/* Header info */}
             <div className="flex items-center gap-2.5 text-xs text-stone-500 mb-2 flex-wrap">
@@ -278,7 +278,7 @@ export const ProductDetailModal: React.FC = () => {
               <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block mb-2">
                 Menu Pendamping Cocok Lainnya:
               </span>
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="w-full min-w-0 max-w-full flex gap-2 overflow-x-auto scrollbar-none touch-pan-x pb-1">
                 {recommendations.map((rec) => (
                   <button
                     key={rec.id}

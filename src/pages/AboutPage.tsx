@@ -39,10 +39,10 @@ export const AboutPage: React.FC = () => {
             <img
               src="/assets/images/hero_culinary_feast_1793604100215.jpg"
               alt="Dapur RASA NUSANTARA"
-              className="w-full h-[400px] object-cover"
+              className="w-full h-[280px] sm:h-[400px] object-cover"
             />
           </div>
-          <div className="absolute -bottom-5 -left-5 bg-white p-4 rounded-2xl shadow-lg border border-[#F2E5D7] max-w-xs">
+          <div className="mt-3 sm:mt-0 sm:absolute sm:-bottom-5 sm:-left-5 bg-white p-4 rounded-2xl shadow-lg border border-[#F2E5D7] sm:max-w-xs">
             <p className="font-serif text-sm font-bold text-[#39271F]">
               "Setiap Gigitan, Cerita Kelezatan."
             </p>
